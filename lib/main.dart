@@ -1,6 +1,6 @@
-import 'package:app_theme/theme.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:app_theme/theme_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -9,9 +9,25 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ThemeNotifier>.value(
+          value: ThemeNotifier(),
+        ),
+      ],
+      child: App(),
+    );
+  }
+}
+
+class App extends StatelessWidget {
+  const App({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: themeLight,
+      theme: context.watch<ThemeNotifier>().theme,
       debugShowCheckedModeBanner: false,
       home: MyHomePage(),
     );
@@ -50,7 +66,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         title: Text('Theme app'),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              context.read<ThemeNotifier>().changeTheme();
+            },
             icon: Icon(Icons.save_alt),
           )
         ],
